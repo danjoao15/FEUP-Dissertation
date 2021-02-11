@@ -1,0 +1,138 @@
+{% extends 'navigationbar.html' %}
+{% load static %}
+{% block body %}
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+
+.sidebar a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: cadetblue;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+</style>
+
+
+<div class="sidebar">
+  <a href="{% url 'view_patient_general' patient.id %}"> <b>Visão Geral</b></a>
+<a class="active" style="background-color: cadetblue;"href="{% url 'questionnaires' patient.id %}"><b>Questionários</b></a>
+<a  href="{% url 'biometric_data' patient.id %}"><b>Dados Biométricos</b></a>
+<a href="{% url 'hrv_data' patient.id %}">HRV</a>
+<a href="{% url 'sleep_data' patient.id %}">Sono</a>
+<a href="{% url 'physical_activity_data' patient.id %}">Atividade Física</a>
+<a href="{% url 'qdvrs_total' patient.id %}"><b>QdVRS Total</b></a>
+</div>
+
+
+    <div class="content" style="margin-top:50px">
+    <br> <br>
+    <ul class="nav nav-pills nav-fill nav-dark bg-dark">
+        <li class="nav-item">
+    <a  class="nav-link"href="{% url 'questionnaires' patient.id %}">Visão Geral </a>
+  </li>
+  <li class="nav-item">
+    <a  class="nav-link "  href="{% url 'sf_36' patient.id %}">SF-36 </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" style="background-color: cadetblue;" href="{% url 'facit' patient.id %}">FACT-Lym</a>
+  </li>
+</ul>
+
+<br>
+         <br>
+
+        <h1> Paciente <b>{{ patient.name }}</b>  - Resultados Fact-Lym </h1>
+        <br><br> 
+
+
+
+    <div class="container" style="margin-top:50px">
+<h2 class="text-center"> Adicionar Momento de Avaliação </h2>
+        <br><br>
+    <form method="post">
+        {% csrf_token %}
+        <label> Momento de avaliação </label>
+        <input type ="text" class="form-control" name="evaluationMoment" required>
+        <label> Componente Física (0-28) </label>
+        <input type ="number" min="0" max="28" class="form-control" name="physical" required>
+        <label> Componente Social e Familiar (0-28)</label>
+        <input type ="number" min="0" max="28" class="form-control" name="social_family" required>
+        <label> Componente Emocional (0-24)</label>
+        <input type ="number" min="0" max="24" class="form-control" name="emotional" required>
+        <label> Componente Funcional (0-28) </label>
+        <input type ="number" min="0" max="28" class="form-control" name="functional" required>
+        <label> Linfoma (0-60)</label>
+        <input type ="number" min="0" max="60" class="form-control" name="lymphoma" required>
+        <label> TOI (0-116)</label>
+        <input type ="number" min="0" max="116" class="form-control" name="toi" required>
+        <label> FACT-G (0-108) </label>
+        <input type ="number" min="0" max="108" class="form-control" name="fact_g" required>
+        <label> FACT-Lym (0-168) </label>
+        <input type ="number" min="0" max="168" class="form-control" name="fact_lym" required>
+        <br>
+        <input type ="submit" value="Submeter" class="form-control btn btn-primary">
+    </form>
+</div>
+
+      {% ifequal error "no" %}
+        <script>
+        alert('Registo guardado com sucesso!')
+         window.location=('{% url 'factTable' patient.id %}')
+        </script>
+   {% endifequal %}
+
+     {% ifequal error "yes" %}
+         <script>
+        alert('Algo correu mal. Tente outra vez.')
+         </script>
+   {% endifequal %}
+
+{% endblock %}

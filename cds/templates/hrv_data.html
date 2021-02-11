@@ -1,0 +1,294 @@
+{% extends 'navigationbar.html' %}
+{% load static %}
+{% block body %}
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+
+.sidebar a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: cadetblue;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+</style>
+
+
+<div class="sidebar">
+  <a href="{% url 'view_patient_general' patient.id %}"> <b>Visão Geral</b></a>
+<a href="{% url 'questionnaires' patient.id %}"><b>Questionários QdVRS</b></a>
+<a class="active" style="background-color: cadetblue;" href="{% url 'biometric_data' patient.id %}"><b>Dados Biométricos</b></a>
+<a class="active" style="background-color: cadetblue;" href="{% url 'hrv_data' patient.id %}">HRV</a>
+<a href="{% url 'sleep_data' patient.id %}">Sono</a>
+<a href="{% url 'physical_activity_data' patient.id %}">Atividade Física</a>
+<a href="{% url 'qdvrs_total' patient.id %}"><b>QdVRS Total</b></a>
+</div>
+
+
+    <div class="content" style="margin-top:50px">
+    <br> <br>
+<br>
+<br>
+
+<h1 style="text-align:center"> Paciente <b>{{ patient.name }}</b>  - Métricas HRV  </h1>
+        <br><br>
+          <table id="example2" class="table table-hover table-sm table-bordered" class="d-flex flex-nowrap">
+            <thead>
+                 <tr>
+                 <th style="text-align:left"> Ciclo<p></p></th>
+                 <th style="text-align:left"> RMSSD média diária (ms) <p style="float: right;"><button type="button" style="border:2px solid cadetblue;"  data-toggle="modal" data-target="#infoRMSSD"><i class="fa fa-info-circle" style="font-size:24px;color:cadetblue"></i>
+                </button> </p></th>
+                 <th style="text-align:left"> SDNN média diária (ms)<p style="float: right;"><button type="button"   style="border:2px solid cadetblue;"  data-toggle="modal" data-target="#infoSDNN"><i class="fa fa-info-circle" style="font-size:24px;color:cadetblue"></i>
+                </button> </p></th>
+                <th style="text-align:left;"> Apagar <p></p></th>
+                 </tr>
+            </thead>
+            <tbody>
+              {% for i in hrvData %}
+              {% ifequal i.patient.id patient.id %}
+                 <tr>
+                     <td>{{i.cycle }} </td>
+                     <td>{{i.rmssd }}</td>
+                     <td>{{ i.sdnn}}</td>
+                      <td style="text-align:center"><a href="{% url 'delete_hrvData' i.id  %}" onclick="return confirm('Tem a certeza que pretende eliminar este registo?')" class="btn btn-danger"> Apagar</a></td>
+                  
+                 </tr>
+                {% endifequal %}
+                {% endfor %}
+             </tbody>
+        </table>
+        <!-- Modals -->
+        <div class="modal fade" id="infoRMSSD" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">RMSSD </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                É a raiz  quadrada  da  média  do  quadrado  das  diferenças  entre  intervalos  RR  normais adjacentes, 
+                expressa em milisegundos, ou seja, o desvio-padrão das diferenças entre intervalos RR normais adjacentes 
+                e refletem predominantemente o tônus vagal. <br>
+                <br>
+                Valores normais para RMSSD corrigido para frequência cardíaca (em ms) por faixa etária para ambos os sexos:
+                <br>
+                Mediana (2º percentil; 98º percentil)
+                <br> <br>
+                Faixa etária - homens - mulheres
+                <br>      
+                < 1 mês - 153,1 (53,0; 440,2) - 161,9 (56,9; 463,9)
+                <br>
+                1 a 2 meses - 152,4 (52,7; 438,7) - 161,1 (56,6; 462,2)
+                <br>
+                3 a 5 meses 150,9 (52,1; 435,7) 159,6 * (56,0; 458,6)
+                <br>
+                6 a 11 meses - 148,8 (51,2; 431,1) - 157,3 * (55,1; 453,2)
+                <br>
+                1 a 2 anos - 141,9 (48,4; 416,3) - 150,0 (52,1; 435,8)
+                <br>
+                3 a 4 anos - 131,4 (44,1; 393,1) - 138,9 (47,6; 409,4)
+                <br>
+                5 a 7 anos - 118,8 (39,1; 364,6) - 126,0 (42,5; 378,3)
+                <br>
+                8 a 11 anos - 102,1 (32,8; 324,9) - 109,7 (36,1; 338,1)
+                <br>
+                12 a 15 anos - 84,8 (26,5; 280,3) - 93,6 (30,1; 297,1)
+                <br>
+                16 a 19 anos - 70,1 (21,6; 239,3) - 80,4 (25,3; 261,8)
+                <br>
+                20 a 29 anos - 51,9 (16,0; 182,7) - 63,7 *** (19,8 **; 212,9)
+                <br>
+                30 a 39 anos - 37,7 (12,1; 134,4) - 47,7 *** (15,3 *; 158,4)
+                <br>
+                40 a 49 anos - 29,9 (9,8; 111,5) - 35,8 *** (12,1; 118,5)
+                <br>
+                50 a 59 anos - 24,1 (7,7; 102,5) - 27,3 *** (9,5 ***; 95,6)
+                <br>
+                60 a 69 anos - 20,7 (6,2; 114,6) - 22,6 ** (8,0 *; 92,2)
+                <br>
+                70 a 79 anos - 19,0 (5,4; 157,1) - 20,3 (7,0; 112,1 *)
+                <br>
+                80 a 89 anos - 17,9 (4,9; 230,1) - 19,2 (6,3; 166,7)
+                <br> <br>
+              ∗ Valor de P < 0,05 para diferença entre homens e mulheres; ∗∗ valor P < 0,01; ∗∗∗ valor P < 0,001; RMSSD, raiz quadrada média das diferenças sucessivas do intervalo RR.
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+
+        <div class="modal fade" id="infoSDNN" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">SDNN </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                SDDN é o desvio padrão de todos os intervalos RR normais gravados num intervalo de tempo, expresso em ms; O índice SDNN é obtido a partir de registos de longa duração e representa as atividades simpática e parassimpática, porém não permitem distinguir quando as alterações da 
+                Variação de Frequência Cardíaca são devidas ao aumento do tônus simpático ou diminuição do tônus vagal.
+                Os valores de SDNN ajudam a prever tanto morbidade como mortalidade. 
+                <br>  
+                <br>  
+                Valores normais para SDNN corrigido pela frequência cardíaca (em ms) por faixa etária e para ambos os sexos:
+                <br>  
+              Média (2º percentil; 98º percentil)
+              <br>
+              <br>  
+              Faixa etária - Homenes - Mulher
+              <br>
+            < 1 mês - 99,6 (33,6; 265,6) - 109,2 (35,1; 282,2)
+            <br>
+            1 a 2 meses - 99,4 (33,4; 265,1) - 108,8 (35,0; 281,6 *)
+            <br>
+            3 a 5 meses - 98,8 (33,2; 264,1) - 08,1 (34,7; 280,3)
+            <br>
+            6 a 11 meses - 98,1 (32,9; 262,7) - 107,1 (34,3; 278,3)
+            <br>
+            1 a 2 anos - 95,4 (31,8; 258,0) 1- 03,8 (33,1; 271,9)
+            <br>
+            3 a 4 anos - 91,3 (30,0; 250,4) - 98,6 (31,2; 261,9)
+            <br>
+            5 a 7 anos - 86,0 (27,8; 240,5) - 92,3 (28,9; 249,8)
+            <br>
+            8 a 11 anos - 78,3 (24,7; 225,7) - 84,0 (25,8; 233,5)
+            <br>
+            12 a 15 anos - 69,3 (21,1; 208,0) - 75,2 (22,7; 215,7)
+            <br>
+            16 a 19 anos - 60,7 (17,8; 190,9) - 67,3 (20,0; 199,2)
+            <br>
+            20 a 29 anos - 48,5 (13,9; 161,4) - 56,0 *** (16,6 **; 172,7)
+            <br>
+            30 a 39 anos - 37,5 (11,0; 129,2) - 43,4 *** (13,3 **; 137,8)
+            <br>
+            40 a 49 anos - 30,4 (8,8; 113,7) - 33,3 * (10,6; 109,5)
+            <br>
+            50 a 59 anos - 24,4 (6,9; 103,4) - 25,6 (8,4 ***; 90,2 *)
+            <br>
+            60 a 69 anos - 20,4 (5,6; 104,8) - 20,7 (6,9 **; 82,8)
+            <br>
+            70 a 79 anos - 17,8 (4,7; 120,9) - 17,9 (5,9; 89,5 *)
+            <br>
+            80 a 89 anos - 15,6 (3,9; 158,3) - 16,1 (5,1; 126,1)
+            <br>
+            <br>  
+
+∗ Valor de P < 0,05 para diferença entre homens e mulheres; ∗∗ valor P < 0,01; ∗∗∗ valor P < 0,001; SDNN, desvio padrão dos intervalos RR normal a normal.
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+          <br>
+          <a href="{% url 'add_hrv_data' patient.id %}" class="btn btn-primary" style="background-color: cadetblue;"> Adicionar Ciclo </a>
+          <br><br>
+        
+          <div id="container" style="width: 100%;">
+            <canvas id="hrv-chart"></canvas>
+          </div>
+          
+          <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+          <script>
+            var config = {
+              type: 'line',
+              
+              data: {
+                datasets: [{
+                  data: {{ rmssd|safe}},
+                  fill: false,
+                  borderColor: "#37364e",
+                   borderDash: [5, 5],
+                   backgroundColor: "#e755ba",
+                   pointBackgroundColor: "#55bae7",
+                   pointBorderColor: "#55bae7",
+                   pointHoverBackgroundColor: "#55bae7",
+                   pointHoverBorderColor: "#55bae7",
+                  label: 'RMSSD'
+                },{
+                  data: {{ sdnn|safe }},
+                  fill: false,
+                  borderColor: "#355d69",
+                   borderDash: [5, 5],
+                   backgroundColor: "#e755ba",
+                   pointBackgroundColor: "#55bae7",
+                   pointBorderColor: "#55bae7",
+                   pointHoverBackgroundColor: "#55bae7",
+                   pointHoverBorderColor: "#55bae7",
+                  label: 'SDNN'
+              
+                }],
+                labels: {{ labels|safe }}
+              },
+              options: {
+                responsive: true
+              }
+            };
+          
+            window.onload = function() {
+              var ctx = document.getElementById('hrv-chart').getContext('2d');
+              window.myPie = new Chart(ctx, config);
+            };
+          
+          </script>
+          
+          </div>
+
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends 'navigationbar.html' %}
+{% load static %}
+{% block body %}
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+
+.sidebar a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: cadetblue;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+</style>
+
+
+<div class="sidebar">
+  <a href="{% url 'view_patient_general' patient.id %}"> <b>Visão Geral</b></a>
+<a href="{% url 'questionnaires' patient.id %}"><b>Questionários QdVRS</b></a>
+<a class="active" style="background-color: cadetblue;" href="{% url 'biometric_data' patient.id %}"><b>Dados Biométricos</b></a>
+<a href="{% url 'hrv_data' patient.id %}">HRV</a>
+<a href="{% url 'sleep_data' patient.id %}">Sono</a>
+<a class="active" style="background-color: cadetblue;" href="{% url 'physical_activity_data' patient.id %}">Atividade Física</a>
+<a href="{% url 'qdvrs_total' patient.id %}"><b>QdVRS Total</b></a>
+</div>
+
+
+    <div class="content" style="margin-top:50px">
+    <br> <br>
+    <ul class="nav nav-pills nav-fill nav-dark bg-dark">
+      <li class="nav-item">
+        <a class="nav-link"  href="{% url 'physical_activity_data' patient.id %}">Visão Geral</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link"   href="{% url 'sedentary_activity' patient.id %}">Atividade Sedentária</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'light_activity' patient.id %}">Atividade Ligeira</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" style="background-color: cadetblue;" href="{% url 'moderate_activity' patient.id %}">Atividade Moderada</a>
+      </li>
+    </ul>
+
+    <br><br>
+    <h1 style="text-align:center"> Paciente <b>{{ patient.name }}</b>  - Atividade Moderada  </h1>
+    <br><br>
+      <table  id="example" class="table table-hover table-sm table-bordered" class="d-flex flex-nowrap">
+        <thead>
+             <tr>
+             <th style="text-align:left"> Ciclo</th>
+             <th style="text-align:left"> Tempo </th>
+             <th style="text-align:left"> HRV </th>
+             <th style="text-align:left"> Calorias </th>
+             
+             </tr>
+        </thead>
+        <tbody>
+          {% for i in moderate %}
+          
+             <tr>
+                 <td>{{i.cycle }} </td>
+                 <td>{{i.moderateTime }}</td>
+                 <td>{{ i.moderateHRV}}</td>
+                 <td>{{ i.moderateCalories}}</td>
+                 
+             </tr>
+            
+            {% endfor %}
+         </tbody>
+    </table>
+    <br><br>
+        <h7 style="text-align:center" > Clique nas variáveis que  <b>não</b> pretende ver representadas no gráfico </h7>
+    <div id="container" style="width: 100%;">
+      <canvas id="moderate-chart"></canvas>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script>
+      var config = {
+        type: 'line',
+        
+        data: {
+          datasets: [{
+            data: {{ times|safe}},
+            fill: false,
+            borderColor: "#37364e",
+             borderDash: [5, 5],
+             backgroundColor: "#e755ba",
+             pointBackgroundColor: "#55bae7",
+             pointBorderColor: "#55bae7",
+             pointHoverBackgroundColor: "#55bae7",
+             pointHoverBorderColor: "#55bae7",
+            label: 'Tempo'
+          },{
+            data: {{ hrv|safe }},
+            fill: false,
+            borderColor: "#355d69",
+             borderDash: [5, 5],
+             backgroundColor: "#e755ba",
+             pointBackgroundColor: "#55bae7",
+             pointBorderColor: "#55bae7",
+             pointHoverBackgroundColor: "#55bae7",
+             pointHoverBorderColor: "#55bae7",
+            label: 'HRV'
+          },
+          {
+            data: {{ calories|safe }},
+            fill: false,
+            borderColor: "#6aae9d",
+             borderDash: [5, 5],
+             backgroundColor: "#e755ba",
+             pointBackgroundColor: "#55bae7",
+             pointBorderColor: "#55bae7",
+             pointHoverBackgroundColor: "#55bae7",
+             pointHoverBorderColor: "#55bae7",
+            label: 'Calorias Gastas'
+          
+          }],
+          labels: {{ labels|safe }}
+        },
+        options: {
+          responsive: true
+        }
+      };
+    
+      window.onload = function() {
+        var ctx = document.getElementById('moderate-chart').getContext('2d');
+        window.myPie = new Chart(ctx, config);
+      };
+    
+    </script>
+    </div>
+    {% endblock %}

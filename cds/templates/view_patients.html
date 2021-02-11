@@ -1,0 +1,36 @@
+{% extends 'navigationbar.html' %}
+{% load static %}
+{% block body %}
+<br><br>
+    <div class="container" style="margin-top:50px">
+        <h2 class="text-center" style="color: cadetblue;"> Ver Pacientes </h2>
+        <br><br>
+            <table class="table table-hover" id="example2">
+                <thead>
+                     <tr>
+                     <th style="text-align:left"> ID Paciente</th>
+                      <th style="text-align:left"> Nome </th>
+                      <th style="text-align:left"> Género </th>
+                         <th style="text-align:left"> Contacto </th>
+                      <th style="text-align:left"> Morada </th>
+                         <th style="text-align:left"> Apagar </th>
+                     </tr>
+                </thead>
+                <tbody>
+                 {% for i in patient %}
+                     <tr>
+                         <td><a href="{% url 'view_patient_general' i.id %}">{{ i.id }} </a></td>
+                         <td><a href="{% url 'view_patient_general' i.id %}">{{ i.name }}</a></td>
+                         <td>{{ i.gender }}</td>
+                         <td>{{ i.mobile }}</td>
+                          <td>{{ i.address }}</td>
+                         <td><a href="{% url 'delete_patient' i.id %}" onclick="return confirm('Tem a certeza que pretende eliminar este registo?')" class="btn btn-danger"> Apagar </a></td>
+                     </tr>
+                {% endfor %}
+                 </tbody>
+            </table>
+     <br><br>
+    <a href="{% url 'add_patient' %}" class="btn btn-primary btn-block" style="background-color: cadetblue;"> Adicionar Paciente </a>
+   
+    </div>
+{% endblock %}

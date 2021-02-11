@@ -1,0 +1,19 @@
+
+{% extends 'navigationbar.html' %}
+{% load static %}
+{% block body %}
+<br><br>
+<div class="container" style="margin-top:50px">
+<h2 class="text-center"> Sobre </h2>
+<br><br><br>
+<div class="row">
+    <div class="col-sm-4 text-center" >
+        <img src="{% static 'images/about.jpg' %}" width="300" height="200" class="img-responsive">
+    </div>
+    <div class="col-sm-8 font-weight-bold mt-5">
+    Este sistema de apoio à decisão clinica tem como principal intuito auxiliar os profissional de saúde a
+        tomar a decisiões clinicas mais suportadas, tendo em conta a qualidade de vida relacionada com a saúde de pacientes oncológicos.
+    </div>
+    </div>
+</div>
+{% endblock %}

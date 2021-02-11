@@ -1,0 +1,165 @@
+{% extends 'navigationbar.html' %}
+{% load static %}
+{% block body %}
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+
+.sidebar a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: cadetblue;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+</style>
+
+
+<div class="sidebar">
+ <a class="active" style="background-color: cadetblue;"  href="{% url 'view_patient_general' patient.id %}"> <b>Visão Geral</b></a> 
+<a href="{% url 'questionnaires' patient.id %}"><b>Questionários QdVRS</b></a>
+<a href="{% url 'biometric_data' patient.id %}"><b>Dados Biométricos</b></a>
+<a href="{% url 'hrv_data' patient.id %}">HRV</a>
+<a href="{% url 'sleep_data' patient.id %}">Sono</a>
+<a href="{% url 'physical_activity_data' patient.id %}">Atividade Física</a>
+<a href="{% url 'qdvrs_total' patient.id %}"><b>QdVRS Total</b></a>
+</div>
+
+
+    <div class="content" style="margin-top:50px">
+    <br> <br>
+    <ul class="nav nav-pills nav-fill nav-dark bg-dark">
+  <li class="nav-item">
+    <a class="nav-link active" style="background-color: cadetblue;" href="#">Informação Geral </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'clinical_data' patient.id %}">Dados Clínicos</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'chemotherapy' patient.id %}">Quimioterapia</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link " href="{% url 'radiotherapy' patient.id %}">Radioterapia</a>
+  </li>
+</ul>
+        <br>
+         <br>
+
+        <h1> Paciente <b>{{ patient.name }}</b>  - Informação Geral  </h1>
+        <br><br>
+
+        <form id="updatePatientdata" action="" method="POST">
+            {% csrf_token %}
+            <label type="text" > Nome Paciente : </label>
+            <textarea class="form-control" name="name" placeholder= {{patient.name}} id="myInput"> {{patient.name}}</textarea>
+            <br>
+            <label type="number" > Idade: </label>
+            <input type ="number" class="form-control" value={{patient.age}} name="age" placeholder= {{patient.age}}>
+            <br>
+            <label type="radio" > Género: </label>
+            {% ifequal patient.gender "Female" %}
+            <input type ="radio" name="gender" value="Male"> Masculino
+            <input type ="radio" name="gender" value="Female" checked> Feminino
+            {% else %}
+            <input type ="radio" name="gender" value="Male" checked> Masculino
+            <input type ="radio" name="gender" value="Female"> Feminino
+            {% endifequal %}
+            <br>
+            <label type="text" > Morada: </label>
+            <textarea class="form-control" name="address" placeholder= {{patient.address}} > {{patient.address}}  </textarea>
+            <br>
+            <label type="number" > Contacto: </label>
+            <input type ="number" class="form-control" name="mobile" value={{patient.mobile}} placeholder= {{patient.mobile}}>
+            <br>
+            <label type="text" > Diagnóstico: </label>
+            <textarea class="form-control" name="condition" placeholder= {{patient.condition}} > {{patient.condition}} </textarea>
+            <br>
+            <label type="number" > Peso: </label>
+            <textarea class="form-control" name="weight" placeholder= {{patient.weight}} > {{patient.weight}} </textarea>
+            <br>
+            <label type="number" > Altura: </label>
+            <textarea class="form-control" name="height" placeholder= {{patient.height}} > {{patient.height}} </textarea>
+            <br>
+            <label type="number" > IMC: </label>
+            <textarea class="form-control" name="imc" placeholder= {{patient.imc}} > {{patient.imc}} </textarea>
+            <br>
+            <label type="text" > Fumador: </label>
+            <textarea class="form-control" name="smoker" placeholder= {{patient.smoker}} > {{patient.smoker}} </textarea>
+            <br>
+            <label type="text" > Medicação Habitual: </label>
+            <textarea class="form-control" name="medication" placeholder= {{patient.medication}} > {{patient.medication}} </textarea>
+            <br>
+            <input type ="submit" value="Guardar Alterações" class="form-control btn btn-primary">
+        </form>
+          
+        {% ifequal error "no" %}
+        <script>
+        alert('Registo guardado com sucesso!')
+         window.location=('{% url 'view_patient_general' patient.id %}')
+        </script>
+   {% endifequal %}
+
+     {% ifequal error "yes" %}
+         <script>
+        alert('Algo correu mal. Tente outra vez.')
+         </script>
+   {% endifequal %}
+
+{% endblock %}
+        
+      
+
+
+
+
+
+     
+
+    
+   

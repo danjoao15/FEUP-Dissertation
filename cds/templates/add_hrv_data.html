@@ -1,0 +1,112 @@
+{% extends 'navigationbar.html' %}
+{% load static %}
+{% block body %}
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+
+.sidebar a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: cadetblue;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+</style>
+
+
+<div class="sidebar">
+ <a  href="{% url 'view_patient_general' patient.id %}"> <b>Visão Geral</b></a> 
+<a href="{% url 'questionnaires' patient.id %}"><b>Questionários QdVRS</b></a>
+<a class="active" style="background-color: cadetblue;"  href="{% url 'biometric_data' patient.id %}"><b>Dados Biométricos</b></a>
+<a class="active"  style="background-color: cadetblue;"  href="{% url 'hrv_data' patient.id %}">HRV</a>
+<a href="{% url 'sleep_data' patient.id %}">Sono</a>
+<a href="{% url 'physical_activity_data' patient.id %}">Atividade Física</a>
+<a href="{% url 'qdvrs_total' patient.id %}"><b>QdVRS Total</b></a>
+</div>
+
+
+<div class="content" style="margin-top:50px">
+    <br> <br>
+    
+
+        <h1> Paciente <b>{{ patient.name }}</b>  - Adicionar Ciclo   </h1>
+     
+
+    <form method="post">
+        {% csrf_token %}
+        <label> Ciclo </label>
+        <textarea class="form-control" name="cycle"></textarea>
+        <br>
+        <label> RMSSD média</label>
+        <input type ="number" step="any" class="form-control" name="rmssd">
+        <br>
+        <label> SDNN média</label>
+        <input type ="number" step="any" class="form-control" name="sdnn">
+        <br>
+        <input type ="submit" value="Adicionar Ciclo" class="form-control btn btn-primary">
+    </form>
+    </div>
+
+      {% ifequal error "no" %}
+        <script>
+        alert('Registo guardado com sucesso!')
+         window.location=('{% url 'hrv_data' patient.id %}')
+        </script>
+        {% endifequal %}
+        
+        {% ifequal error "yes" %}
+        <script>
+       alert('Algo correu mal. Tente outra vez.')
+        </script>
+  {% endifequal %}
+
+    
+
+{% endblock %}

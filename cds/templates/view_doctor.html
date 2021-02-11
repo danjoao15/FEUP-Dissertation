@@ -1,0 +1,33 @@
+
+{% extends 'navigationbar.html' %}
+{% load static %}
+{% block body %}
+<br><br>
+    <div class="container" style="margin-top:50px">
+        <h2 class="text-center"> Ver Médico </h2>
+        <br><br>
+            <table class="table table-hover" id="example2">
+                <thead>
+                     <tr>
+                     <th style="text-align:left"> ID Médico </th>
+                      <th style="text-align:left">  Nome </th>
+                      <th style="text-align:left"> Contacto </th>
+                      <th style="text-align:left"> Especialidade </th>
+                     </tr>
+                </thead>
+                <tbody>
+                 {% for i in doctor %}
+                     <tr>
+                         <td>{{ i.id }}</td>
+                         <td>{{ i.name }}</td>
+                         <td>{{ i.mobile }}</td>
+                          <td>{{ i.specialization }}</td>
+                     </tr>
+                {% endfor %}
+                 </tbody>
+            </table>
+    <br><br>
+    
+   
+         </div>
+{% endblock %}

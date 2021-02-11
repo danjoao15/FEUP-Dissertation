@@ -1,0 +1,70 @@
+.nav-link{
+    color:white !important;
+}
+
+.nav-link:hover{
+    color:white !important;
+    background-color: cadetblue;
+    border-radius: 10px;
+}
+
+
+.rounded{
+    border-top: 8px solid cadetblue;
+    border-radius: 5px;
+}
+
+.navbar-brand:hover{
+    color: cadetblue!important;
+    font-weight: bold;
+}
+
+.mydivstyle:hover {
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.3);
+    transform: translateY(-20px);
+}
+
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid cadetblue;
+  }
+
+  h1{
+      text-align: left;
+      color: cadetblue;
+  }
+
+  h2{
+    text-align: center;
+    color: cadetblue;
+}
+
+  .display-data h9 { 
+    display: inline;
+  }
+  .display-data span { 
+    float: right;
+  }
+
+  .btn{
+      background-color: cadetblue;
+      border: 2px solid cadetblue;
+  }
+
+ .th{
+     background-color: white;
+     color: cadetblue;
+ }
+ 
+ .row {
+    text-align: center;
+}
+
+* {
+    font-family: Georgia, serif;
+   }
+
+
+  

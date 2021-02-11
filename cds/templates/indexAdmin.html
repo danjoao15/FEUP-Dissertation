@@ -1,0 +1,38 @@
+{% extends 'navigationbar_admin.html' %}
+{% load static %}
+
+{% block body %}
+<div class="container" style="margin-top:50px">
+<br> <br> <br>
+<h1 class="text-center"> Visão Geral Administrador</h1>
+    <br> <br> <br>
+<div class="row">
+    <div class="col-sm-4 text-center mydivstyle">
+        <h3 style = "color:lightskyblue"> {{ d }}</h3>
+        <a href="{% url 'view_doctors_admin' %}"><h4 style = "color:darkred"> Médicos </h4>
+            <hr class="rounded"></a>
+    </div>
+    <div class="col-sm-4 text-center mydivstyle">
+        <h3 style = "color:lightskyblue "> {{ p }}</h3>
+        <a href="{% url 'view_patients_admin' %}"><h4 style = "color:darkred"> Pacientes </h4>
+            <hr class="rounded"></a>
+    </div>
+    <div class="col-sm-4 text-center mydivstyle">
+        <h3 style = "color:lightskyblue"> {{ a }}</h3>
+        <a href="{% url 'view_appointments_admin' %}"><h4 style = "color:darkred"> Consultas </h4>
+            <hr class="rounded"></a>
+    </div>
+</div>
+    <br>
+
+    
+    <div style="margin:auto; width:50%;" class="text-center mydivstyle">
+        <a href="{% url 'admin:index' %}"><h4 style = "color:darkred"> Painel de Administração </h4>
+            <hr class="rounded"></a>
+    </div>
+    
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,255 @@
+{% extends 'navigationbar.html' %}
+{% load static %}
+
+
+
+{% block body %}
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+
+.sidebar a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: cadetblue;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+</style>
+
+
+<div class="sidebar">
+  <a href="{% url 'view_patient_general' patient.id %}"> <b>Visão Geral</b></a>
+<a class="active" style="background-color: cadetblue;"href="{% url 'questionnaires' patient.id %}"><b>Questionários QdVRS</b></a>
+<a  href="{% url 'biometric_data' patient.id %}"><b>Dados Biométricos</b></a>
+<a href="{% url 'hrv_data' patient.id %}">HRV</a>
+<a href="{% url 'sleep_data' patient.id %}">Sono</a>
+<a href="{% url 'physical_activity_data' patient.id %}">Atividade Física</a>
+<a href="{% url 'qdvrs_total' patient.id %}"><b>QdVRS Total</b></a>
+</div>
+
+
+    <div class="content" style="margin-top:50px">
+    <br> <br>
+    <ul class="nav nav-pills nav-fill nav-dark bg-dark">
+        <li class="nav-item">
+    <a  class="nav-link"href="{% url 'questionnaires' patient.id %}">Visão Geral </a>
+  </li>
+  <li class="nav-item">
+    <a  class="nav-link"  href="{% url 'sf_36' patient.id %}">SF-36 </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" style="background-color: cadetblue;" href="{% url 'facit' patient.id %}">FACT-Lym</a>
+  </li>
+</ul>
+
+<br>
+         <br>
+
+        <h1> Paciente <b>{{ patient.name }}</b>  - Resultados FACT-Lym </h1>
+        <br><br> 
+        <a href="{% url 'factChart' patient.id %}" class="btn btn-outline-info btn-sm " style="margin:auto; display:block;background-color: white;" > Ver Gráfico </a>
+        <br><br>
+
+    
+                    <table id="example2" class="table table-hover table-sm table-bordered" class="d-flex flex-nowrap">
+                        <thead>
+                             <tr>
+                              <th style="text-align:center"> ID</th>
+                             <th style="text-align:center"> Fase</th>
+                             <th style="text-align:center"> Bem-estar Físico (0-28)</th>
+                             <th style="text-align:center"> Bem-estar Social/Familiar (0-28)</th>
+                             <th style="text-align:center"> Bem-estar Emocional (0-24)</th>
+                             <th style="text-align:center"> Bem-estar Funcional (0-28)</th>
+                             <th style="text-align:center"> Linfoma (0-60)</th>
+                             <th style="text-align:center"> TOI (0-116)</th>
+                             <th style="text-align:center"> FACT-G (0-108)</th>
+                             <th style="text-align:center"> FACT-Lym (0-168)</th>
+                             <th style="text-align:left"> Apagar </th>
+                             </tr>
+                        </thead>
+                        <tbody>
+                          {% if fact_lym|length < 2%}
+                            {% for i in fact_lym %}
+                          <tr>
+                            <td>{{i.id}} </td>
+                          <td>{{i.evaluationMoment }} </td>
+                          <td>{{i.physical }}</td>
+                          <td>{{ i.social_family }}</td>
+                          <td>{{ i.emotional }}</td>
+                           <td>{{ i.functional }}</td>
+                           <td>{{ i.lymphoma }}</td>
+                           <td>{{ i.toi }}</td>
+                           <td>{{ i.fact_g }}</td>
+                           <td>{{ i.fact_lym }}</td>
+                           <td style="text-align:center"><a href="{% url 'delete_factlym' i.id %}" onclick="return confirm('Tem a certeza que pretende eliminar este registo?')" class="btn btn-danger"> Apagar </a></td>
+                      </tr>
+                          {% endfor %}
+                          {% else %}
+
+                              {% for i,a in zipped %}
+                                {% if forloop.first %}
+                                <tr>
+                                  <td>{{i.id}} </td>
+                                 <td>{{i.evaluationMoment }} </td>
+                                 <td>{{i.physical }}</td>
+                                 <td>{{ i.social_family  }}</td>
+                                 <td>{{ i.emotional  }}</td>
+                                  <td>{{ i.functional}}</td>
+                                  <td>{{ i.lymphoma  }}</td>
+                                  <td>{{ i.toi }}</td>
+                                  <td>{{ i.fact_g }}</td>
+                                  <td>{{ i.fact_lym}}</td>
+                                  <td style="text-align:center"><a href="{% url 'delete_factlym' i.id %}" onclick="return confirm('Tem a certeza que pretende eliminar este registo?')" class="btn btn-danger"> Apagar </a></td>
+                                 </tr>
+                             
+                                  
+                              {% endif %}
+
+                                <tr>
+                                  <td>{{i.id}} </td>
+                                <td>{{a.evaluationMoment }} </td>
+                                {% ifequal a.physical i.physical%}
+                                <td>{{a.physical}} <i class='fas fa-equals' style='font-size:25px;color:cadetblue;float: right;'></i></td>
+                                {% endifequal %}
+                                {% if a.physical > i.physical%}
+                                <td>{{a.physical}} <i class="fa fa-arrow-up" style="font-size:25px;color:green;float: right;"></i></td>
+                                {% endif %}
+                                {% if a.physical < i.physical%}
+                                <td>{{a.physical}} <i class="fa fa-arrow-down" style="font-size:25px;color:red;float: right;"></i></td>
+                                {% endif %}
+  
+                        
+                                {% ifequal a.social_family i.social_family %}
+                                <td>{{a.social_family}} <i class='fas fa-equals' style='font-size:25px;color:cadetblue;float: right;'></i></td>
+                                {% endifequal %}
+                                {% if a.social_family > i.social_family %}
+                                <td>{{a.social_family}} <i class="fa fa-arrow-up" style="font-size:25px;color:green;float: right;"></i></td>
+                                {% endif %}
+                                {% if a.social_family < i.social_family %}
+                                <td>{{a.social_family}} <i class="fa fa-arrow-down" style="font-size:25px;color:red;float: right;"></i></td>
+                                {% endif %}
+  
+                                {% ifequal a.emotional i.emotional %}
+                                <td>{{a.emotional }} <i class='fas fa-equals' style='font-size:25px;color:cadetblue;float: right;'></i></td>
+                                {% endifequal %}
+                                {% if a.emotional > i.emotional%}
+                                <td>{{a.emotional }} <i class="fa fa-arrow-up" style="font-size:25px;color:green;float: right;"></i></td>
+                                {% endif %}
+                                {% if a.emotional  < i.emotional %}
+                                <td>{{a.emotional }} <i class="fa fa-arrow-down" style="font-size:25px;color:red;float: right;"></i></td>
+                                {% endif %}
+  
+                                {% ifequal a.functional i.functional %}
+                                <td>{{a.functional}} <i class='fas fa-equals' style='font-size:25px;color:cadetblue;float: right;'></i></td>
+                                {% endifequal %}
+                                {% if a.functional > i.functional %}
+                                <td>{{a.functional}} <i class="fa fa-arrow-up" style="font-size:25px;color:green;float: right;"></i></td>
+                                {% endif %}
+                                {% if a.functional < i.functional %}
+                                <td>{{a.functional}} <i class="fa fa-arrow-down" style="font-size:25px;color:red;float: right;"></i></td>
+                                {% endif %}
+  
+                                {% ifequal a.lymphoma i.lymphoma %}
+                                <td>{{a.lymphoma}} <i class='fas fa-equals' style='font-size:25px;color:cadetblue;float: right;'></i></td>
+                                {% endifequal %}
+                                {% if a.lymphoma > i.lymphoma %}
+                                <td>{{a.lymphoma}} <i class="fa fa-arrow-up" style="font-size:25px;color:green;float: right;"></i></td>
+                                {% endif %}
+                                {% if a.lymphoma < i.lymphoma %}
+                                <td>{{a.lymphoma}} <i class="fa fa-arrow-down" style="font-size:25px;color:red;float: right;"></i></td>
+                                {% endif %}
+  
+                                {% ifequal a.toi  i.toi  %}
+                                <td>{{a.toi }} <i class='fas fa-equals' style='font-size:25px;color:cadetblue;float: right;'></i></td>
+                                {% endifequal %}
+                                {% if a.toi  > i.toi  %}
+                                <td>{{a.toi }} <i class="fa fa-arrow-up" style="font-size:25px;color:green;float: right;"></i></td>
+                                {% endif %}
+                                {% if a.toi  < i.toi  %}
+                                <td>{{a.toi }} <i class="fa fa-arrow-down" style="font-size:25px;color:red;float: right;"></i></td>
+                                {% endif %}
+  
+                                {% ifequal a.fact_g i.fact_g %}
+                                <td>{{a.fact_g}} <i class='fas fa-equals' style='font-size:25px;color:cadetblue;float: right;'></i></td>
+                                {% endifequal %}
+                                {% if a.fact_g > i.fact_g %}
+                                <td>{{a.fact_g}} <i class="fa fa-arrow-up" style="font-size:25px;color:green;float: right;"></i></td>
+                                {% endif %}
+                                {% if a.fact_g < i.fact_g %}
+                                <td>{{a.fact_g}} <i class="fa fa-arrow-down" style="font-size:25px;color:red;float: right;"></i></td>
+                                {% endif %}
+  
+                                {% ifequal a.fact_lym i.fact_lym %}
+                                <td>{{a.fact_lym}} <i class='fas fa-equals' style='font-size:25px;color:cadetblue;float: right;'></i></td>
+                                {% endifequal %}
+                                {% if a.fact_lym > i.fact_lym %}
+                                <td>{{a.fact_lym}} <i class="fa fa-arrow-up" style="font-size:25px;color:green;float: right;"></i></td>
+                                {% endif %}
+                                {% if a.fact_lym < i.fact_lym %}
+                                <td>{{a.fact_lym}}<i class="fa fa-arrow-down" style="font-size:25px;color:red;float: right;"></i></td>
+                                {% endif %}
+                                <td style="text-align:center"><a href="{% url 'delete_factlym' i.id %}" onclick="return confirm('Tem a certeza que pretende eliminar este registo?')" class="btn btn-danger"> Apagar </a></td>
+                              </tr>
+                               
+                         
+                            {% endfor %}
+                            {% endif %}
+                            
+                          
+                         </tbody>
+                    </table>
+             <br><br>
+            <a href="{% url 'add_questionnaire_factlym' patient.id %}" class="btn btn-primary btn-block" style="background-color: cadetblue;"> Adicionar Registo </a>
+            <br><br>
+            
+
+</div>
+        {% endblock %}
+       

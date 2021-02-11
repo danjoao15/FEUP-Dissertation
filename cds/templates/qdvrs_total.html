@@ -1,0 +1,97 @@
+{% extends 'navigationbar.html' %}
+{% load static %}
+{% block body %}
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+
+.sidebar a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: cadetblue;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+
+}
+</style>
+
+
+<div class="sidebar">
+  <a href="{% url 'view_patient_general' patient.id %}"> <b>Visão Geral</b></a>
+<a href="{% url 'questionnaires' patient.id %}"><b>Questionários QdVRS</b></a>
+<a   href="{% url 'biometric_data' patient.id %}"><b>Dados Biométricos</b></a>
+<a href="{% url 'hrv_data' patient.id %}">HRV</a>
+<a href="{% url 'sleep_data' patient.id %}">Sono</a>
+<a href="{% url 'physical_activity_data' patient.id %}">Atividade Física</a>
+<a class="active" style="background-color: cadetblue;" href="{% url 'qdvrs_total' patient.id %}"><b>QdVRS Total</b></a>
+</div>
+
+
+
+<div class="content" style="margin-top:50px">
+  <br>
+         <br>
+
+        <h1 style="text-align:center"> Paciente <b>{{ patient.name }}</b> - Qualidade de Vida Relacionada com Saúde Geral </h1>
+        <br><br>
+<div class="content" style="margin-top:50px">
+
+<div class="row">
+    <div class="col-sm-4 text-center mydivstyle">
+        <a href="{% url 'biometric_data' patient.id %}"><h4 style = "color:darkred"> Dados Biométricos </h4>
+            <hr class="rounded"></a>
+    </div>
+    <div class="col-sm-4 text-center mydivstyle">
+        <a href="{% url 'questionnaires' patient.id %}"><h4 style = "color:darkred"> Questionários </h4>
+            <hr class="rounded"></a>
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}

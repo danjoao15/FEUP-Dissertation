@@ -1,0 +1,250 @@
+{% extends 'navigationbar.html' %}
+{% load static %}
+{% block body %}
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+
+.sidebar a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: cadetblue;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+</style>
+
+
+<div class="sidebar">
+  <a href="{% url 'view_patient_general' patient.id %}"> <b>Visão Geral</b></a>
+<a class="active" style="background-color: cadetblue;"href="{% url 'questionnaires' patient.id %}"><b>Questionários QdVRS</b></a>
+<a  href="{% url 'biometric_data' patient.id %}"><b>Dados Biométricos</b></a>
+<a href="{% url 'hrv_data' patient.id %}">HRV</a>
+<a href="{% url 'sleep_data' patient.id %}">Sono</a>
+<a href="{% url 'physical_activity_data' patient.id %}">Atividade Física</a>
+<a href="{% url 'qdvrs_total' patient.id %}"><b>QdVRS Total</b></a>
+</div>
+
+
+    <div class="content" style="margin-top:50px">
+    <br> <br>
+    <ul class="nav nav-pills nav-fill nav-dark bg-dark">
+        <li class="nav-item">
+    <a  class="nav-link"href="{% url 'questionnaires' patient.id %}">Visão Geral </a>
+  </li>
+  <li class="nav-item">
+    <a  class="nav-link active" style="background-color: cadetblue;" href="{% url 'sf_36' patient.id %}">SF-36 </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link " href="{% url 'facit' patient.id %}">FACT-Lym</a>
+  </li>
+</ul>
+
+<br>
+         <br>
+
+        <h1> Paciente <b>{{ patient.name }}</b>  - Resultados SF-36 Tabela</h1>
+        <br><br> 
+        <a href="{% url 'sf_36chart' patient.id %}" class="btn btn-outline-info btn-sm " style="margin:auto; display:block;background-color: white;" > Ver Gráfico </a>
+        <br><br>
+    
+                    <table id="example2" class="table table-hover table-sm table-bordered" class="d-flex flex-nowrap">
+                        <thead>
+                             <tr>
+                              <th style="text-align:center"> ID</th>
+                             <th style="text-align:center"> Fase</th>
+                             <th style="text-align:center"> Capacidade Funcional (10-30)</th>
+                             <th style="text-align:center"> Limitações Físicas (4-8)</th>
+                             <th style="text-align:center"> Dor (2-12)</th>
+                             <th style="text-align:center"> Saúde Geral (5-25)</th>
+                             <th style="text-align:center"> Vitalidade (4-24)</th>
+                             <th style="text-align:center"> Aspetos Sociais (2-10)</th>
+                             <th style="text-align:center"> Aspetos Emocionais (3-6)</th>
+                             <th style="text-align:center"> Saúde Mental (5-30)</th>
+                             <th style="text-align:left"> Apagar </th>
+                             </tr>
+                        </thead>
+                        <tbody>
+                          {% if sf_36|length < 2%}
+                            {% for i in sf_36 %}
+                          <tr>
+                            <td>{{i.id}} </td>
+                          <td>{{i.evaluationMoment }} </td>
+                          <td>{{i.functional_capacity }}</td>
+                          <td>{{ i.physical_limitations }}</td>
+                          <td>{{ i.pain }}</td>
+                           <td>{{ i.overall_health }}</td>
+                           <td>{{ i.vitality }}</td>
+                           <td>{{ i.social_aspects }}</td>
+                           <td>{{ i.emotional_aspects }}</td>
+                           <td>{{ i.mental_health }}</td>
+                           <td style="text-align:center"><a href="{% url 'delete_sf36' i.id %}" onclick="return confirm('Tem a certeza que pretende eliminar este registo?')" class="btn btn-danger"> Apagar </a></td>
+                      </tr>
+                          {% endfor %}
+                          {% else %}
+
+                              {% for i,a in zipped %}
+                                {% if forloop.first %}
+                                <tr>
+                                  <td>{{i.id}} </td>
+                                 <td>{{i.evaluationMoment }} </td>
+                                 <td>{{i.functional_capacity }}</td>
+                                 <td>{{ i.physical_limitations }}</td>
+                                 <td>{{ i.pain }}</td>
+                                  <td>{{ i.overall_health }}</td>
+                                  <td>{{ i.vitality }}</td>
+                                  <td>{{ i.social_aspects }}</td>
+                                  <td>{{ i.emotional_aspects }}</td>
+                                  <td>{{ i.mental_health }}</td>
+                                  <td style="text-align:center"><a href="{% url 'delete_sf36' i.id %}" onclick="return confirm('Tem a certeza que pretende eliminar este registo?')" class="btn btn-danger"> Apagar </a></td>
+                                 </tr>
+                             
+                                  
+                              {% endif %}
+
+                                <tr>
+                                  <td>{{i.id}} </td>
+                                <td>{{a.evaluationMoment }} </td>
+                                {% ifequal a.functional_capacity i.functional_capacity%}
+                                <td>{{a.functional_capacity}} <i class='fas fa-equals' style='font-size:25px;color:cadetblue;float: right;'></i></td>
+                                {% endifequal %}
+                                {% if a.functional_capacity > i.functional_capacity%}
+                                <td>{{a.functional_capacity}} <i class="fa fa-arrow-up" style='font-size:25px;color:green;float: right;'></i></td>
+                                {% endif %}
+                                {% if a.functional_capacity < i.functional_capacity%}
+                                <td>{{a.functional_capacity}} <i class="fa fa-arrow-down" style='font-size:25px;color:red;float: right;'></i></td>
+                                {% endif %}
+  
+                        
+                                {% ifequal a.physical_limitations i.physical_limitations %}
+                                <td>{{a.physical_limitations}} <i class='fas fa-equals' style='font-size:25px;color:cadetblue;float: right;'></i></td>
+                                {% endifequal %}
+                                {% if a.physical_limitations > i.physical_limitations %}
+                                <td>{{a.physical_limitations}} <i class="fa fa-arrow-up" style="font-size:25px;color:green;float: right;"></i></td>
+                                {% endif %}
+                                {% if a.physical_limitations < i.physical_limitations %}
+                                <td>{{a.physical_limitations}} <i class="fa fa-arrow-down" style="font-size:25px;color:red;float: right;"></i></td>
+                                {% endif %}
+  
+                                {% ifequal a.pain  i.pain %}
+                                <td>{{a.pain }} <i class='fas fa-equals' style='font-size:25px;color:cadetblue;float: right;'></i></td>
+                                {% endifequal %}
+                                {% if a.pain > i.pain %}
+                                <td>{{a.pain }} <i class="fa fa-arrow-down" style="font-size:25px;color:green;float: right;"></i></td>
+                                {% endif %}
+                                {% if a.pain  < i.pain %}
+                                <td>{{a.pain }} <i class="fa fa-arrow-down" style="font-size:25px;color:red;float: right;"></i></td>
+                                {% endif %}
+  
+                                {% ifequal a.overall_health i.overall_health %}
+                                <td>{{a.overall_health}} <i class='fas fa-equals' style='font-size:25px;color:cadetblue;float: right;'></i></td>
+                                {% endifequal %}
+                                {% if a.overall_health > i.overall_health %}
+                                <td>{{a.overall_health}} <i class="fa fa-arrow-down" style="font-size:25px;color:green;float: right;"></i></td>
+                                {% endif %}
+                                {% if a.overall_health < i.overall_health%}
+                                <td>{{a.overall_health}} <i class="fa fa-arrow-down" style="font-size:25px;color:red;float: right;"></i></td>
+                                {% endif %}
+  
+                                {% ifequal a.vitality i.vitality %}
+                                <td>{{a.vitality}} <i class='fas fa-equals' style='font-size:25px;color:cadetblue;float: right;'></i></td>
+                                {% endifequal %}
+                                {% if a.vitality > i.vitality %}
+                                <td>{{a.vitality}} <i class="fa fa-arrow-up" style="font-size:25px;color:green;float: right;"></i></td>
+                                {% endif %}
+                                {% if a.vitality < i.vitality%}
+                                <td>{{a.vitality}} <i class="fa fa-arrow-down" style="font-size:25px;color:red;float: right;"></i></td>
+                                {% endif %}
+  
+                                {% ifequal a.social_aspects i.social_aspects %}
+                                <td>{{a.social_aspects}} <i class='fas fa-equals' style='font-size:25px;color:cadetblue;float: right;'></i></td>
+                                {% endifequal %}
+                                {% if a.social_aspects > i.social_aspects %}
+                                <td>{{a.social_aspects}} <i class="fa fa-arrow-up" style="font-size:25px;color:green;float: right;"></i></td>
+                                {% endif %}
+                                {% if a.social_aspects < i.social_aspects%}
+                                <td>{{a.social_aspects}} <i class="fa fa-arrow-down" style="font-size:25px;color:red;float: right;"></i></td>
+                                {% endif %}
+  
+                                {% ifequal a.emotional_aspects i.emotional_aspects %}
+                                <td>{{a.emotional_aspects}} <i class='fas fa-equals' style='font-size:25px;color:cadetblue;float: right;'></i></td>
+                                {% endifequal %}
+                                {% if a.emotional_aspects > i.emotional_aspects %}
+                                <td>{{a.emotional_aspects}}  <i class="fa fa-arrow-up" style="font-size:25px;color:green;float: right;"></i></td>
+                                {% endif %}
+                                {% if a.emotional_aspects < i.emotional_aspects %}
+                                <td>{{a.emotional_aspects}} <i class="fa fa-arrow-down" style="font-size:25px;color:red;float: right;"></i></td>
+                                {% endif %}
+  
+                                {% ifequal a.mental_health i.mental_health%}
+                                <td>{{a.mental_health}} <i class='fas fa-equals' style='font-size:25px;color:cadetblue;float: right;'></i></td>
+                                {% endifequal %}
+                                {% if a.mental_health > i.mental_health%}
+                                <td>{{a.mental_health}}  <i class="fa fa-arrow-up" style="font-size:25px;color:green;float: right;"></i></td>
+                                {% endif %}
+                                {% if a.mental_health < i.mental_health%}
+                                <td>{{a.mental_health}}<i class="fa fa-arrow-down" style="font-size:25px;color:red;float: right;"></i></td>
+                                {% endif %}
+                                <td style="text-align:center"><a href="{% url 'delete_sf36' i.id %}" onclick="return confirm('Tem a certeza que pretende eliminar este registo?')" class="btn btn-danger"> Apagar </a></td>
+                              </tr>
+                               
+                         
+                            {% endfor %}
+                            {% endif %}
+                            
+                          
+                         </tbody>
+                    </table>
+             <br><br>
+            <a href="{% url 'add_questionnaire_sf36' patient.id %}" class="btn btn-primary btn-block" style="background-color: cadetblue;"> Adicionar Registo </a>
+            <br><br> 
+            
+</div>
+{% endblock %}

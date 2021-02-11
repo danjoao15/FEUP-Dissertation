@@ -1,0 +1,129 @@
+{% extends 'navigationbar.html' %}
+{% load static %}
+{% block body %}
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+
+.sidebar a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: cadetblue;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+</style>
+
+
+<div class="sidebar">
+  <a class="active" style="background-color: cadetblue;"  href="{% url 'view_patient_general' patient.id %}"> <b>Visão Geral</b></a>
+<a href="{% url 'questionnaires' patient.id %}"><b>Questionários QdVRS</b></a>
+<a href="{% url 'biometric_data' patient.id %}"><b>Dados Biométricos</b></a>
+<a href="{% url 'hrv_data' patient.id %}">HRV</a>
+<a href="{% url 'sleep_data' patient.id %}">Sono</a>
+<a href="{% url 'physical_activity_data' patient.id %}">Atividade Física</a>
+<a href="{% url 'qdvrs_total' patient.id %}"><b>QdVRS Total</b></a>
+</div>
+
+
+    <div class="content" style="margin-top:50px">
+    <br> <br>
+    <ul class="nav nav-pills nav-fill nav-dark bg-dark">
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'view_patient_general' patient.id %}">Informação Geral </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link " href="{% url 'clinical_data' patient.id %}">Dados Clínicos</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" style="background-color: cadetblue;"href="{% url 'chemotherapy' patient.id %}">Quimioterapia</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link"  href="{% url 'radiotherapy' patient.id %}">Radioterapia</a>
+  </li>
+</ul>
+
+<br>
+         <br>
+
+        <h1> Paciente <b>{{ patient.name }}</b>  - Quimioterapia  </h1>
+        <br><br>
+        <table class="table table-hover" id="example2">
+            <thead>
+                 <tr>
+                 <th style="text-align:left"> Ciclo</th>
+                 <th style="text-align:left"> Data Ínicio</th>
+                 <th style="text-align:left"> Data Fim</th>
+                 <th style="text-align:left"> Esquema</th>
+                 <th style="text-align:left"> Apagar</th>
+                 </tr>
+            </thead>
+            <tbody>
+              {% for i in chemotherapy %}
+              {% ifequal i.patient.id patient.id %}
+                 <tr>
+                     <td>{{i.cycle }} </td>
+                     <td>{{i.dateBeg }}</td>
+                     <td>{{ i.dateEnd }}</td>
+                     <td>{{ i.scheme }}</td>
+                      <td style="text-align:center"><a href="{% url 'delete_chemotherapy' i.id  %}" onclick="return confirm('Tem a certeza que pretende eliminar este registo?')" class="btn btn-danger"> Apagar Registo </a></td>
+                  
+                 </tr>
+                {% endifequal %}
+                {% endfor %}
+             </tbody>
+        </table>
+          <br><br>
+          <a href="{% url 'add_chemotherapy' patient.id %}" class="btn btn-primary" style="background-color: cadetblue;"> Adicionar Ciclo </a>
+          <br><br>
+          <a href="{% url 'qdvrs_total' patient.id %}" class="btn btn-primary " style="background-color: cadetblue;"> Ver Evolução </a>
+        
+    </div>
+
+{% endblock %}
